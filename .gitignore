@@ -50,3 +50,5 @@ Thumbs.db
 .idea/
 .vscode/
 .tabbit_qa.js
+docs/.qa_handoff_word/
+~$*.docx
