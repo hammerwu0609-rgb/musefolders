@@ -1,0 +1,74 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="950" viewBox="0 0 1600 950" role="img" aria-labelledby="title desc">
+  <title id="title">曲境主题地图：语义区块示意</title>
+  <desc id="desc">以大小不等的主题区块取代逐曲散点。亲情与爱情相邻，离别、回忆、成长等主题按语义关系由近及远分布。所有数量均为模拟数据。</desc>
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#0d1426"/><stop offset="1" stop-color="#111c35"/></linearGradient>
+    <linearGradient id="family" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#e89b82" stop-opacity=".88"/><stop offset="1" stop-color="#ab677d" stop-opacity=".82"/></linearGradient>
+    <linearGradient id="love" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#ed819e" stop-opacity=".94"/><stop offset="1" stop-color="#b05da0" stop-opacity=".88"/></linearGradient>
+    <linearGradient id="loss" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#9d87ca" stop-opacity=".85"/><stop offset="1" stop-color="#756eae" stop-opacity=".84"/></linearGradient>
+    <linearGradient id="friend" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#6faeb2" stop-opacity=".90"/><stop offset="1" stop-color="#547baf" stop-opacity=".84"/></linearGradient>
+    <linearGradient id="memory" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#b08bbf" stop-opacity=".90"/><stop offset="1" stop-color="#6977b1" stop-opacity=".86"/></linearGradient>
+    <linearGradient id="growth" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#638ac7" stop-opacity=".86"/><stop offset="1" stop-color="#70b4a6" stop-opacity=".88"/></linearGradient>
+    <linearGradient id="joy" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#e6b864" stop-opacity=".90"/><stop offset="1" stop-color="#ce865e" stop-opacity=".85"/></linearGradient>
+    <linearGradient id="journey" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#72b0ac" stop-opacity=".85"/><stop offset="1" stop-color="#5590b5" stop-opacity=".84"/></linearGradient>
+    <linearGradient id="hope" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#a6c68e" stop-opacity=".87"/><stop offset="1" stop-color="#70ae96" stop-opacity=".82"/></linearGradient>
+    <filter id="shadow"><feDropShadow dx="0" dy="12" stdDeviation="22" flood-color="#000713" flood-opacity=".35"/></filter>
+    <style>
+      text { font-family: 'Microsoft YaHei', 'Noto Sans CJK SC', 'PingFang SC', sans-serif; }
+      .block { stroke: #d9e8fa; stroke-opacity: .25; stroke-width: 2; filter: url(#shadow); }
+      .name { fill: #fff; font-size: 34px; font-weight: 700; text-anchor: middle; letter-spacing: 2px; paint-order: stroke; stroke: #213044; stroke-opacity: .12; stroke-width: 2; }
+      .count { fill: #fff; fill-opacity: .9; font-size: 21px; text-anchor: middle; }
+      .cardhead { fill: #eff5ff; font-size: 30px; font-weight: 700; }
+      .body { fill: #b7c6db; font-size: 22px; }
+    </style>
+  </defs>
+  <rect width="1600" height="950" fill="url(#bg)"/>
+  <text x="70" y="72" fill="#f6f8ff" font-size="42" font-weight="700">曲境 · 主题地图</text>
+  <text x="70" y="111" fill="#9eb2ce" font-size="23">语义地形概念图｜模拟数据，不代表当前曲库结果</text>
+
+  <rect x="60" y="148" width="1070" height="716" rx="28" fill="#172238" stroke="#3b4d69" stroke-width="2"/>
+  <path d="M105 198 H1085 M105 440 H1085 M105 671 H1085" stroke="#45607b" stroke-opacity=".14" stroke-width="1"/>
+
+  <!-- Relationships are visualized by adjoining territories, not arbitrary X/Y axes. -->
+  <path class="block" fill="url(#family)" d="M143 215 C183 184 290 181 352 211 C381 226 391 258 383 299 C373 333 367 374 342 408 C284 431 216 426 157 403 C120 367 107 274 143 215 Z"/>
+  <path class="block" fill="url(#love)" d="M404 213 C459 184 604 183 690 210 C735 230 761 285 745 340 C737 374 700 404 667 424 C591 428 493 423 413 415 C377 378 375 252 404 213 Z"/>
+  <path class="block" fill="url(#loss)" d="M772 227 C818 194 943 192 1018 224 C1064 251 1083 315 1060 366 C1033 403 969 420 907 420 C844 417 797 421 771 385 C750 343 749 263 772 227 Z"/>
+
+  <path class="block" fill="url(#friend)" d="M143 452 C200 429 283 437 347 437 C379 451 395 489 393 527 C392 572 369 623 333 651 C273 670 193 657 147 638 C118 602 114 497 143 452 Z"/>
+  <path class="block" fill="url(#memory)" d="M415 444 C464 420 583 431 676 442 C717 461 730 506 711 557 C695 605 655 643 611 652 C532 658 470 642 427 616 C398 579 389 479 415 444 Z"/>
+  <path class="block" fill="url(#growth)" d="M743 447 C799 424 961 430 1028 448 C1070 472 1081 525 1056 575 C1028 626 979 652 904 650 C827 645 783 638 748 605 C719 566 719 474 743 447 Z"/>
+
+  <path class="block" fill="url(#joy)" d="M155 682 C207 664 313 673 388 672 C429 692 435 748 410 794 C387 831 315 840 241 835 C181 830 144 808 133 772 C124 735 131 704 155 682 Z"/>
+  <path class="block" fill="url(#journey)" d="M449 684 C504 661 593 668 661 674 C702 687 726 729 710 775 C691 822 647 835 573 837 C509 837 454 821 437 787 C417 748 425 700 449 684 Z"/>
+  <path class="block" fill="url(#hope)" d="M746 682 C797 661 906 662 994 680 C1044 705 1071 749 1048 792 C1026 828 963 841 866 839 C798 835 756 818 734 785 C718 748 723 703 746 682 Z"/>
+
+  <text class="name" x="250" y="302">亲情</text><text class="count" x="250" y="340">14 首 · 歌词 / 标题</text>
+  <text class="name" x="562" y="301">爱情</text><text class="count" x="562" y="341">27 首 · 歌词 / 标题</text>
+  <text class="name" x="912" y="300">离别与失落</text><text class="count" x="912" y="340">12 首 · 歌词 / 标题</text>
+  <text class="name" x="252" y="531">友情与陪伴</text><text class="count" x="252" y="570">18 首 · 歌词 / 标题</text>
+  <text class="name" x="562" y="530">回忆与思念</text><text class="count" x="562" y="570">21 首 · 歌词 / 标题</text>
+  <text class="name" x="900" y="531">自我与成长</text><text class="count" x="900" y="570">19 首 · 歌词 / 标题</text>
+  <text class="name" x="280" y="750">快乐与庆祝</text><text class="count" x="280" y="785">9 首</text>
+  <text class="name" x="572" y="750">自由与远方</text><text class="count" x="572" y="785">11 首</text>
+  <text class="name" x="889" y="750">希望与未来</text><text class="count" x="889" y="785">10 首</text>
+
+  <rect x="1160" y="148" width="380" height="716" rx="28" fill="#1b2942" stroke="#405372" stroke-width="2"/>
+  <text class="cardhead" x="1193" y="205">这张图怎么读？</text>
+  <line x1="1193" x2="1507" y1="229" y2="229" stroke="#536883"/>
+  <text class="body" x="1193" y="274">亲情 ⇄ 爱情：主题相近</text>
+  <text class="body" x="1193" y="311">回忆：连接多种关系</text>
+  <text class="body" x="1193" y="348">远离 ≠ 绝对不相关</text>
+  <line x1="1193" x2="1507" y1="382" y2="382" stroke="#536883"/>
+  <text class="cardhead" x="1193" y="429">区块大小</text>
+  <text class="body" x="1193" y="473">大致表示相关歌曲数</text>
+  <text class="body" x="1193" y="510">一首歌可属于多个主题</text>
+  <line x1="1193" x2="1507" y1="545" y2="545" stroke="#536883"/>
+  <text class="cardhead" x="1193" y="592">点开后</text>
+  <text class="body" x="1193" y="636">查看该区歌曲、试听</text>
+  <text class="body" x="1193" y="673">按歌词依据筛选 / 纠错</text>
+  <text class="body" x="1193" y="710">加入候选歌单</text>
+  <line x1="1193" x2="1507" y1="744" y2="744" stroke="#536883"/>
+  <text x="1193" y="787" fill="#87c9db" font-size="21">浅色边界＝主题可过渡</text>
+  <text x="1193" y="821" fill="#92a8c4" font-size="20">无固定横 / 纵坐标含义</text>
+  <text x="70" y="914" fill="#8ca2bd" font-size="21">示意原则：距离表达相对语义接近；面积表达曲目覆盖量；精确相似仍在原始文本向量中计算。</text>
+</svg>

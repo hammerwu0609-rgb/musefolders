@@ -1,0 +1,22 @@
+{
+  "date": "2026-09-26",
+  "scope": "95 analyzable MP3 tracks on the current Windows machine; sonic-map indexing only",
+  "model_sha256": "a48ad887950a557aefbb4dcddf58ad4802213ff5fc6fb51eda3507cd797bb9b0",
+  "cold_index": {
+    "elapsed_seconds": 47.246,
+    "points": 95,
+    "computed": 95,
+    "cache_hits": 0,
+    "failures": 0,
+    "projection": "umap"
+  },
+  "warm_index": {
+    "elapsed_seconds": 3.263,
+    "points": 95,
+    "computed": 0,
+    "cache_hits": 95,
+    "failures": 0,
+    "projection": "umap"
+  },
+  "limitations": "Excludes the existing per-track acoustic analysis, dependency installation, and user-interface load time. Device-specific, not a speed guarantee."
+}

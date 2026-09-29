@@ -1,0 +1,15 @@
+Copyright (c) 2026 曲境项目团队. All rights reserved.
+
+No permission is granted to copy, modify, distribute, sublicense, publish,
+commercialize, or create derivative works from the 曲境/MuseFolders project
+source code or project-specific documentation without prior written permission
+from the copyright holders.
+
+This notice does not alter the licenses of third-party libraries, models, data,
+or other assets. Those components remain governed by their respective licenses
+and notices, including the files under models/ and the dependencies declared in
+pyproject.toml.
+
+Before any public release, the project team must confirm the legal names of all
+copyright holders and replace or approve this provisional private-repository
+notice.

@@ -1,0 +1,9 @@
+{
+  "count": 10,
+  "model_sha256": "a48ad887950a557aefbb4dcddf58ad4802213ff5fc6fb51eda3507cd797bb9b0",
+  "sample_seconds": 6.235,
+  "full_seconds": 16.443,
+  "mean_top5_overlap": 0.8,
+  "per_track_top5_overlap": [0.6, 0.8, 1.0, 1.0, 0.6, 0.6, 0.8, 0.8, 0.8, 1.0],
+  "method_note": "Overlap among only the sampled tracks; not a human similarity-quality score."
+}

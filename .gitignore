@@ -1,0 +1,52 @@
+# Python environments and caches
+.venv/
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+
+# Build and release output
+build/
+dist/
+release/
+*.egg-info/
+
+# Local analysis records and user data
+artifacts/
+outputs/
+exports/
+*.log
+
+# Secrets and local Streamlit state
+.env
+.env.*
+!.env.example
+.streamlit/secrets.toml
+
+# Optional model with share-alike distribution obligations
+models/lid.176.ftz
+
+# Never commit demo/user music, lyrics, or extracted covers
+*.mp3
+*.wav
+*.flac
+*.m4a
+*.ogg
+*.oga
+*.opus
+*.aac
+*.mgg
+*.qmc0
+*.qmc3
+*.qmcflac
+*.kgm
+*.ncm
+*.lrc
+
+# Editor and OS files
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
+.tabbit_qa.js
