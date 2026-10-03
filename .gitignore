@@ -52,3 +52,9 @@ Thumbs.db
 .tabbit_qa.js
 docs/.qa_handoff_word/
 ~$*.docx
+
+# Windows-encrypted local credentials
+.local/
+
+# Cloud demo data is prepared locally, never published with source
+demo_library/

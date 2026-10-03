@@ -1,0 +1,16 @@
+*
+!Dockerfile
+!requirements-cloud.txt
+!cloud_app.py
+!src/
+!src/**
+!demo_library/
+!demo_library/**
+!.streamlit/
+!.streamlit/config.toml
+**/__pycache__
+**/*.pyc
+.git
+.local
+.env
+secrets.toml

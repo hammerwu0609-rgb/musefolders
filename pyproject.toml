@@ -5,6 +5,7 @@ description = "Offline-first music library encoder and folder compiler for the T
 readme = "README.md"
 requires-python = ">=3.11,<3.13"
 dependencies = [
+  "qqmusic-api-python==0.7.3",
   "librosa>=0.11,<0.12",
   "mediapipe>=0.10.21,<1.1",
   "mutagen>=1.47,<2",
@@ -35,4 +36,3 @@ packages = ["src/musefolders"]
 [tool.pytest.ini_options]
 testpaths = ["tests"]
 pythonpath = ["src"]
-

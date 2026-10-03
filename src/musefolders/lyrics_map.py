@@ -236,13 +236,21 @@ def _matching_files(directory: Path, stem: str) -> list[Path]:
     )
 
 
+def lyric_match_key(stem: str) -> str:
+    """Normalize exporter decorations, preserving artist and recording/version names."""
+    value = unicodedata.normalize("NFKC", stem).casefold().strip()
+    value = re.sub(r"\s*\(\d{5,}\)$", "", value)
+    value = re.sub(r"_(?:l|sq|hq)$", "", value)
+    return re.sub(r"\s+", " ", value).strip()
+
+
 def _external_lyrics_index(directory: Path | None) -> dict[str, list[Path]]:
     if directory is None or not directory.is_dir():
         return {}
     index: dict[str, list[Path]] = {}
     for entry in directory.rglob("*"):
         if entry.is_file() and entry.suffix.casefold() in SUPPORTED_LYRIC_SUFFIXES:
-            index.setdefault(entry.stem.casefold(), []).append(entry)
+            index.setdefault(lyric_match_key(entry.stem), []).append(entry)
     for matches in index.values():
         matches.sort(key=lambda entry: str(entry).casefold())
     return index
@@ -332,10 +340,10 @@ def _resolve_track_lyrics(
         return embedded
     if lyrics_root is None:
         return LyricsResolution("missing")
-    external = external_index.get(source.stem.casefold(), [])
+    external = external_index.get(lyric_match_key(source.stem), [])
     if not external:
         return LyricsResolution("missing")
-    if len(external) != 1 or stem_counts.get(source.stem.casefold(), 0) != 1:
+    if len(external) != 1 or stem_counts.get(lyric_match_key(source.stem), 0) != 1:
         return LyricsResolution(
             "ambiguous", source="external",
             candidates=tuple(str(path) for path in external),
@@ -349,6 +357,7 @@ def resolve_track_lyrics(
     lyrics_root: Path | None = None,
     all_tracks: Sequence[TrackEncoding] = (),
     selected_path: Path | None = None,
+    fallback_path: Path | None = None,
 ) -> LyricsResolution:
     """Resolve one track read-only; lyric text exists only in the returned object.
 
@@ -360,12 +369,17 @@ def resolve_track_lyrics(
     tracks = all_tracks or (track,)
     stem_counts: dict[str, int] = {}
     for member in tracks:
-        stem = Path(member.source_path).stem.casefold()
+        stem = lyric_match_key(Path(member.source_path).stem)
         stem_counts[stem] = stem_counts.get(stem, 0) + 1
-    return _resolve_track_lyrics(
+    resolved = _resolve_track_lyrics(
         track, lyrics_root=lyrics_root, selected_path=selected_path,
         external_index=_external_lyrics_index(lyrics_root), stem_counts=stem_counts,
     )
+    if resolved.status != "valid" and fallback_path is not None:
+        fallback = _file_lyrics(Path(fallback_path), "qqmusic")
+        if fallback.status == "valid":
+            return fallback
+    return resolved
 
 
 def _lyric_chunks(text: str) -> list[str]:
@@ -562,7 +576,7 @@ def _scan_lyrics(
     instrumental = set(manual_instrumental_ids)
     stem_counts: dict[str, int] = {}
     for track in tracks:
-        stem = Path(track.source_path).stem.casefold()
+        stem = lyric_match_key(Path(track.source_path).stem)
         stem_counts[stem] = stem_counts.get(stem, 0) + 1
     external_index = _external_lyrics_index(lyrics_root)
 

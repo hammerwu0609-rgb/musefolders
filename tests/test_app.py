@@ -12,7 +12,30 @@ import streamlit as st
 from musefolders.lyrics_map import LyricsModelUnavailable
 
 
-APP_PATH = Path(__file__).resolve().parents[1] / "app.py"
+APP_PATH = Path(__file__).resolve().parents[1] / "legacy_app.py"
+
+
+def test_offline_lyric_search_can_stage_candidates(tmp_path: Path) -> None:
+    source = tmp_path / "music"
+    source.mkdir()
+    audio = source / "Singer - Unrelated.wav"
+    _write_tone(audio, 440, 2.0)
+    audio.with_suffix(".lrc").write_text(
+        "爱情里我们曾经相爱，爱你是我记得的约定。\n"
+        "远方的灯火照亮安静街道，我们走过的桥留下许多故事。\n"
+        "面对未来的日子，回忆仍然留在心里。", encoding="utf-8")
+    app = AppTest.from_file(str(APP_PATH), default_timeout=90).run()
+    app.text_input[0].set_value(str(source))
+    app.text_input[1].set_value(str(tmp_path / "records"))
+    with patch("musefolders.explore_ui.LocalLyricsEmbedder.encode", side_effect=LyricsModelUnavailable("offline")):
+        next(button for button in app.button if button.label == "分析此文件夹").click().run(timeout=90)
+    next(item for item in app.text_input if item.label == "检索条件").set_value("爱情")
+    next(button for button in app.button if button.label == "检索收藏").click().run()
+    assert not app.exception
+    assert len(app.session_state["local_library_hits"][2]) == 1
+    next(button for button in app.button if button.label == "加入候选歌单").click().run()
+    assert not app.exception
+    assert app.session_state["explore_candidate_ids"]
 
 
 def test_browse_folder_updates_keyed_input_before_next_render(tmp_path: Path) -> None:
@@ -254,4 +277,3 @@ def test_local_language_scan_survives_missing_theme_model(tmp_path: Path) -> Non
     assert any("本地多语文本模型尚未就绪" in item.value for item in app.warning)
     assert app.session_state["explore_lyrics_result"].model_version == "title-clues-v1"
     assert any(tab.label == "演唱语言地图" for tab in app.tabs)
-

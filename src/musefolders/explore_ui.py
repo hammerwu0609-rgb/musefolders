@@ -28,6 +28,7 @@ from .exploration import (
     ExplorationConstraints, ExplorationResult, similar_tracks, song_alchemy, song_path,
 )
 from .filter_assistant import FilterAssistantError, suggest_filters
+from .library_search import search_library
 from .lyrics_map import (
     FastTextLanguageDetector, LocalLyricsEmbedder, LyricsModelUnavailable,
     build_lyrics_map, build_title_clue_map, rank_theme_neighbors,
@@ -1449,7 +1450,7 @@ def _lyrics_workspace(plan: CollectionPlan, artifacts: Path, focus_id: str | Non
                       labels: dict[str, str], language: str, verified: frozenset[str],
                       app_root: Path) -> None:
     st.caption(labels["lyrics_intro"])
-    folder_text = st.text_input(labels["lyrics_folder"], key="explore_lyrics_folder")
+    folder_text = st.text_input(labels["lyrics_folder"], value=plan.source_root, key="explore_lyrics_folder")
     language_model_text = st.text_input(labels["lyrics_language_model"],
                                         value=str(app_root / "models" / "lid.176.ftz"),
                                         key="explore_language_model")
@@ -1472,6 +1473,34 @@ def _lyrics_workspace(plan: CollectionPlan, artifacts: Path, focus_id: str | Non
     refresh = st.button(labels["lyrics_scan"], key="explore_lyrics_scan")
     sources = {track_id: Path(path) for track_id, path in selected_sources.items()}
     lyrics_root = Path(folder_text) if folder_text.strip() else None
+    with st.expander("离线曲库检索" if language == "zh" else "Offline library search"):
+        st.caption("支持爱情、失恋、思念、成长、友情、亲情，叠加慢速（≤90 BPM）、快速（≥120 BPM）、明亮（≥60/100）；也可输入曲名、歌手或歌词关键词。主题结果是歌词关键词线索，暂不支持否定、任意语义或场景理解。"
+                   if language == "zh" else "Keyword clues for Chinese themes, slow/fast tempo and brightness. Literal title, artist and lyric search is also supported. No arbitrary semantic or scene interpretation.")
+        query = st.text_input("检索条件" if language == "zh" else "Search query", key="local_library_query")
+        if st.button("检索收藏" if language == "zh" else "Search collection", key="local_library_search"):
+            try:
+                hits = search_library(plan.tracks, query, lyrics_root=lyrics_root, selected_sources=sources)
+                st.session_state.local_library_hits = (local_signature, query, hits)
+            except ValueError as exc:
+                st.session_state.pop("local_library_hits", None)
+                st.warning(str(exc))
+        saved_search = st.session_state.get("local_library_hits")
+        if saved_search and saved_search[0] == local_signature and saved_search[1] == query:
+            hits = saved_search[2]
+            by_search_id = plan.track_by_id()
+            st.write(f"{len(hits)} 首" if language == "zh" else f"{len(hits)} tracks")
+            st.dataframe([{"歌曲" if language == "zh" else "Track": _track_name(by_search_id[hit.track_id]),
+                           "依据" if language == "zh" else "Evidence": "; ".join(hit.reasons)} for hit in hits],
+                         hide_index=True)
+            if st.button("加入候选歌单" if language == "zh" else "Add to candidates", disabled=not hits,
+                         key="local_library_add"):
+                draft = _ensure_draft(plan, artifacts, labels)
+                apply_selection(draft, plan, [hit.track_id for hit in hits], "add", "library_search")
+                st.session_state.explore_candidate_kind = "library_search"
+                st.session_state.explore_candidate_scores = {}
+                st.session_state.explore_seed_id = None
+                _save_draft(artifacts, draft, labels)
+                st.rerun()
     if refresh or st.session_state.get("explore_language_signature") != local_signature:
         try:
             language_detector = (FastTextLanguageDetector(Path(language_model_text))
