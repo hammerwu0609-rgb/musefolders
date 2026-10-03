@@ -293,3 +293,96 @@ input::placeholder{color:#9ca9a1}
 @media(min-width:1500px){.workspace-layout{grid-template-columns:minmax(0,1fr) 410px;gap:32px}}
 @media(max-width:1000px) and (min-width:761px){.workspace-layout{grid-template-columns:minmax(0,1fr) 330px;gap:18px}.music-sidebar{padding-left:16px}.workspace-layout .globe-layout{grid-template-columns:minmax(0,1fr)}.workspace-layout .region-list{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));max-height:155px}.workspace-layout .region-note{grid-column:1/-1}}
 @media(max-width:760px){.workspace-layout{display:block}.music-sidebar{position:static;max-height:none;overflow:visible;border:0;padding:0;margin-top:24px}.workspace-layout .globe-layout{grid-template-columns:minmax(0,1fr) 110px}.workspace-layout .region-list{max-height:320px}.music-sidebar .composer-head{gap:10px}.music-sidebar .song-name{font-size:14px}}
+
+/* A quiet record sleeve: ivory type, forest glass, measured spacing. */
+#music-workspace{--bg:#0c110e;--panel:#151e18;--line:#cad8ca20;--muted:#a0afa3;--green:#70d79c;color:#eeeede;background:radial-gradient(ellipse at 25% 27%,#20372955,transparent 48%),var(--bg);padding-bottom:108px}
+.topbar{height:70px;border-color:#d4dfd319}
+.brand{font-size:23px;font-weight:500;letter-spacing:3px;gap:12px}
+.brand small{font-size:9px;letter-spacing:2.5px;margin-left:3px}
+.brand-mark{width:30px;height:30px;display:grid;place-items:center;border:1px solid #95bba177;border-radius:50%;background:repeating-radial-gradient(circle,#1a2c20 0 2px,#294331 3px 3.5px);box-shadow:inset 0 0 0 3px #101c14}
+.brand-mark i{width:8px;height:8px;border-radius:50%;background:#c5ddbb;border:3px solid #b4caa4}
+.top-actions{gap:18px;font-size:12px}
+.top-actions [data-do=manage]{padding:0 14px;border:1px solid #a3b5a230;border-radius:30px;background:#cbd7c708;min-height:37px}
+.library-count{font-size:11px;letter-spacing:.5px}
+.section-heading{margin:26px 0 27px;align-items:flex-end}
+.collection-kicker{display:block;font-size:9px;letter-spacing:2px;color:#94ae99;margin-bottom:11px}
+.section-heading h2{font-family:'Songti SC','STSong','SimSun',serif;font-size:clamp(28px,3vw,42px);font-weight:400;letter-spacing:1px;line-height:1.3}
+.section-heading h2 span{color:#b8d6bb;margin-left:5px}
+.section-heading p{font-size:12px;letter-spacing:1px;margin-top:10px;color:#9cad9e}
+.edition-note{font-size:11px;letter-spacing:.5px;padding:0 10px 4px 0;color:#c7d3c5;white-space:nowrap}
+.edition-note small{display:block;font-size:10px;color:var(--muted);margin-top:9px;padding-left:13px;letter-spacing:0}
+.edition-dot{display:inline-block;width:5px;height:5px;border-radius:50%;background:var(--green);margin:0 8px 2px 0}
+.workspace-layout{gap:30px}
+.atlas{border:0}
+.tabs{border:0;gap:5px;padding:5px;background:#c8dcc507;border-radius:30px;width:fit-content;box-shadow:inset 0 0 0 1px #ccddca12;margin-bottom:10px}
+.tabs button{font-size:12px;min-height:36px;padding:8px 19px;border-radius:24px;transition:background .2s,color .2s}
+.tabs button[aria-selected=true]{background:#dce6d5;color:#16281c;font-weight:500;box-shadow:0 2px 8px #0002}
+.tabs button[aria-selected=true]:after{display:none}
+.view-intro{font-size:11px;color:#a9b9ab;letter-spacing:.5px;margin:18px 0 8px;padding-left:3px}
+.globe-layout{border-radius:18px;position:relative;background:radial-gradient(ellipse at 38% 50%,#365b3822,transparent 66%);min-height:370px}
+.globe{filter:drop-shadow(0 12px 26px #0005)}
+.globe .sphere{fill:#15251b;stroke:#78977b}
+.globe .graticule{stroke:#628064;stroke-opacity:.48}
+.globe .country{stroke:#182c1d;fill:#2d4831}
+.globe .country[fill="#558b62"]{fill:#799176}
+.globe-tools{gap:9px;background:#c5d5bf08;border:1px solid #c3d4bd1b;border-radius:30px;width:fit-content;margin:-16px auto 8px;padding:3px 9px}
+.globe-tools .icon-button{width:29px;min-height:29px}
+.zoom-label{font-size:11px;color:#c7d7c8;align-self:center;min-width:38px;text-align:center}
+.region-summary{font-size:10px;letter-spacing:.4px;color:#adbcae;padding:9px 10px 12px}
+.region-list button{font-size:12px;border-radius:8px;min-height:36px;transition:background .18s}
+.region-list button:hover{background:#c8d9c40b}
+.region-list button.active{background:#9ac8a220;color:#c5edc6}
+.region-note{border-top:1px solid var(--line);padding:13px 10px 0;line-height:1.9}
+.atlas-caption{border-top:1px solid #bdcdb315;font-size:10px;padding:15px 2px;letter-spacing:.2px}
+.music-sidebar{border:1px solid #c2d4be22;border-radius:18px;background:linear-gradient(160deg,#28392a60,#141e1780);backdrop-filter:blur(4px);padding:22px 20px 15px;top:18px;max-height:max(340px,calc(100dvh - 278px));box-shadow:inset 0 1px 0 #e4ecda0a,0 10px 35px #0002}
+.music-sidebar .composer{margin-bottom:19px}
+.music-sidebar .composer-head{display:block;margin-bottom:14px}
+.music-sidebar .composer-head h2{font-family:'Songti SC','STSong','SimSun',serif;font-size:24px;font-weight:400;letter-spacing:1px;margin-bottom:6px}
+.music-sidebar .ai-status{font-size:10px;color:#aabca9}
+.music-sidebar .query-form{border:1px solid #bacab044;background:#0c140e88;border-radius:12px;padding:6px 7px 6px 12px;min-height:51px;transition:border-color .2s,box-shadow .2s}
+.music-sidebar .query-form:focus-within{border-color:#91caa0;box-shadow:0 0 0 3px #8ad99b0b}
+.music-sidebar .query-form input{font-size:12px;color:#f2f2e5}
+.music-sidebar .query-form input::placeholder{color:#95a591}
+.music-sidebar .query-form>svg{width:16px;color:#a0b69e}
+.music-sidebar .query-form button{background:#b8d7b3;border-color:#b8d7b3;color:#142719;border-radius:8px;font-size:11px;padding:8px 10px;min-height:36px}
+.music-sidebar .query-form button svg{width:15px}
+.music-sidebar .suggestions{gap:6px;margin-top:11px}
+.music-sidebar .suggestions button{background:#c9ddbd09;border:1px solid #c9ddbd15;padding:6px 8px;border-radius:20px;font-size:10px;color:#b5c4b1}
+.music-sidebar .suggestions button:hover{color:#dfedda;background:#c9ddbd16}
+.music-tabs{gap:22px;margin-bottom:15px}
+.music-tabs button{font-size:12px;color:#93a38f}
+.music-tabs button[aria-pressed=true]{color:#eeeede}
+.music-tabs button[aria-pressed=true]:after{background:#a6c9a1;height:1px}
+.music-sidebar .results-top h2{font-size:14px;font-weight:400}
+.music-sidebar .results-actions{font-size:10px;gap:14px}
+.music-sidebar .table-head{font-size:9px;color:#899c87;padding-bottom:9px}
+.music-sidebar .song-row{padding:12px 0;min-height:65px;border-color:#bcccad12;border-radius:5px}
+.music-sidebar .song-row:hover{background:#abc9a10a}
+.music-sidebar .song-row.playing{background:#8ac59a15}
+.music-sidebar .song-name{font-size:12px;letter-spacing:.1px}
+.music-sidebar .song-meta{font-size:10px;color:#9cab95;margin-top:6px}
+.music-sidebar .duration,.music-sidebar .index{font-size:10px;color:#94a28b}
+.player{border:1px solid #bbcbb429;border-bottom:0;background:#17221aec;backdrop-filter:blur(8px);box-shadow:0 -8px 30px #0003;padding-top:14px;padding-bottom:14px}
+.record{border-color:#75917166;background:repeating-radial-gradient(circle,#293e2b 0 2px,#1c2d20 3px 4px);color:#cde5bb}
+.player .now-title{font-size:13px}.player .song-meta{color:#a5b59d}.player-empty{font-family:'Songti SC','STSong','SimSun',serif;letter-spacing:1px;color:#b4c2a8}
+.notice{color:#869a85;font-size:10px;padding:18px 0 0}
+.landscape-panel{border-color:#c6d6b322;border-radius:14px;overflow:hidden}
+.sound-chart{padding:18px 17px 22px;background:#c5d5bb04;border:1px solid #c5d5bb17;border-radius:14px}
+.sound-chart-heading h3{font-family:'Songti SC','STSong','SimSun',serif;font-size:24px;font-weight:400;letter-spacing:1px}
+.full-star{max-width:530px}.constellation-option{padding:17px 4px;border-color:#b3c6aa20}
+@keyframes sleeve-enter{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:none}}
+.section-heading{animation:sleeve-enter .6s ease-out backwards}
+.workspace-layout>.explore{animation:sleeve-enter .6s .08s ease-out backwards}
+.music-sidebar{animation:sleeve-enter .6s .16s ease-out backwards}
+button{transition:background-color .18s,color .18s,border-color .18s}
+@media(max-width:1000px) and (min-width:761px){.music-sidebar{padding:18px 14px}.section-heading h2{font-size:33px}.edition-note{display:none}.workspace-layout{gap:20px}}
+@media(max-width:760px){.section-heading{margin:23px 0}.section-heading h2{font-size:29px}.section-heading h2 span{display:block;margin:3px 0 0}.collection-kicker{font-size:8px;letter-spacing:1.5px}.edition-note{display:none}.brand small{display:none}.top-actions{gap:12px;font-size:11px}.top-actions [data-do=manage]{padding:0 10px}.library-count{display:none}.tabs{width:100%;justify-content:space-between}.tabs button{padding:8px 13px;flex:1;font-size:11px}.music-sidebar{margin-top:18px;padding:20px 16px;border:1px solid #c2d4be22}.globe-layout{min-height:0}.atlas-caption{font-size:9px}.sound-chart{padding:14px 10px}.player{padding-left:14px;padding-right:14px}.player-empty{font-size:10px}.music-sidebar .song-name{font-size:13px}}
+@media(prefers-reduced-motion:reduce){.section-heading,.workspace-layout>.explore,.music-sidebar{animation:none}button,.tabs button,.query-form,.region-list button{transition:none}}
+@media(min-width:761px) and (max-height:820px){
+ .topbar{height:60px}.section-heading{margin:17px 0 20px}.collection-kicker{font-size:8px;margin-bottom:7px}.section-heading h2{font-size:31px;line-height:1.2}.section-heading p{font-size:11px;margin-top:7px}.edition-note{font-size:10px}
+ .music-sidebar{max-height:calc(100dvh - 286px);padding-top:17px}.music-sidebar .composer{margin-bottom:13px}.music-sidebar .composer-head{margin-bottom:10px}.music-sidebar .composer-head h2{font-size:22px;margin-bottom:4px}.music-sidebar .query-form{min-height:45px}.music-sidebar .suggestions{margin-top:8px}.music-sidebar .suggestions button{padding:5px 7px}.music-sidebar .song-row{min-height:57px;padding:9px 0}.music-sidebar .music-tabs button{min-height:35px;padding:8px 0}.music-sidebar .results-actions button{min-height:26px}.music-sidebar .table-head{padding-top:6px;padding-bottom:6px}
+ .workspace-layout .globe{max-width:380px}.globe-layout{min-height:0}.workspace-layout .region-list{max-height:280px}.view-intro{margin:13px 0 5px}.atlas-caption{padding:10px 2px}.tabs{margin-bottom:4px}
+}
+@media(max-width:760px){
+ .workspace-layout .globe-layout{display:block}.workspace-layout .globe{max-width:380px}.workspace-layout .region-list{display:block;max-height:none;overflow:visible;margin-top:13px}.region-summary{white-space:nowrap;padding:5px 0 9px}.region-buttons{display:flex;gap:6px;overflow-x:auto;max-height:none;padding-bottom:8px;scrollbar-width:thin;scrollbar-color:#61765e transparent}.region-buttons button{flex:0 0 auto;min-width:91px;background:#c1d2b309;border:1px solid #c1d2b319;gap:12px}.region-list [data-do=unknown-region]{display:inline-flex;gap:12px;min-height:30px;font-size:10px;margin-top:3px;padding-left:0}.region-note{display:none}.globe-tools{margin-top:-12px}.atlas-caption{font-size:9px;line-height:1.7;flex-wrap:wrap;gap:4px;margin-top:6px}
+}
