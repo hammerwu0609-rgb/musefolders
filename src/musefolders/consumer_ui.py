@@ -26,6 +26,7 @@ from .qqmusic_catalog import cached_platform, platform_lyrics
 from .astrology import build_zodiac, make_zodiac_share_card
 
 FRONTEND = Path(__file__).parent / "consumer_frontend"
+SEARCH_RESULT_LIMIT = 15
 
 
 @st.cache_data(show_spinner=False)
@@ -104,7 +105,9 @@ def dispatch(action, plan, profiles, root, sound):
         hits = search_library(plan.tracks, query, lyrics_root=Path(plan.source_root),
                               fallback_sources=platform_lyrics(cached_platform(plan.tracks, artifacts), artifacts),
                               profiles=profiles, intent=intent)
-        st.session_state.simple_results = plan.analysis_id, query, hits
+        total = len(hits)
+        hits = hits[:SEARCH_RESULT_LIMIT]
+        st.session_state.simple_results = plan.analysis_id, query, hits, total
         st.session_state.simple_conditions = plan.analysis_id, intent.conditions()
         return [hit.track_id for hit in hits]
 
@@ -231,7 +234,11 @@ def dispatch(action, plan, profiles, root, sound):
                 st.session_state.consumer_message = "搜索板块已加入预备歌单。" if added else "这个搜索板块已经加入。"
             else:
                 conditions = st.session_state.get("simple_conditions")
-                st.session_state.consumer_message = "理解为：" + " · ".join(conditions[1]) if conditions and conditions[1] else f"找到 {len(ids)} 首收藏。"
+                summary = "理解为：" + " · ".join(conditions[1]) if conditions and conditions[1] else f"找到 {len(ids)} 首收藏。"
+                total = st.session_state.simple_results[3] if query else (previous[3] if previous and len(previous) > 3 else len(ids))
+                if total > len(ids):
+                    summary += f" 共匹配 {total} 首，优先选出前 {len(ids)} 首。"
+                st.session_state.consumer_message = summary
     elif kind == "share":
         zodiac = build_zodiac(sound, plan.tracks)
         try:
