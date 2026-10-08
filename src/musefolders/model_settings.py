@@ -161,9 +161,10 @@ def test_connection(settings: ModelSettings, *, opener=secure_urlopen) -> None:
     settings = validate(settings)
     if not settings.api_key:
         raise ModelSettingsError("请先填写 API 密钥。")
-    body = {"model": settings.model, "temperature": 0, "max_tokens": 64,
+    body = {"model": settings.model, "temperature": 0, "max_tokens": 512,
             "response_format": {"type": "json_object"}, **model_options(settings.api_url),
-            "messages": [{"role": "user", "content": 'Return only JSON: {"ok":true}'}]}
+            "messages": [{"role": "system", "content": 'Respond with a JSON object only. Do not include explanations.'},
+                         {"role": "user", "content": 'Return exactly this JSON object: {"ok":true}'}]}
     req = request.Request(settings.api_url, data=json.dumps(body).encode(), method="POST",
                           headers={"Authorization": "Bearer " + settings.api_key, "Content-Type": "application/json"})
     try:

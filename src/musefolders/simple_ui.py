@@ -217,6 +217,7 @@ def _ai_controls(root, plan):
     settings = active_settings(root)
     st.subheader("模型连接")
     st.caption("自然语言检索和歌词分析共用此配置。支持兼容 Chat Completions、可返回 JSON 的聊天接口。")
+    st.caption("模型配置供产品体验使用，可自行更改。密钥不回显；可选择本机加密保存或仅本次会话使用。")
     if st.session_state.get("simple_model_error"):
         st.warning(st.session_state.simple_model_error)
     st.caption(f"当前：{st.session_state.get('simple_model_origin', '尚未配置')} · {settings.model}")

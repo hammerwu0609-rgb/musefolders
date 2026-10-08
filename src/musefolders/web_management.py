@@ -31,6 +31,7 @@ def form_candidate(url, model, key, current, tested=None):
 def model_controls(root):
     current = active_settings(root)
     st.caption('模型用于理解搜索描述和分析歌词。你填写的配置仅用于本次访问；全站默认模型由服务端配置。')
+    st.caption('默认模型供产品体验使用，可自行更改。更换 API 地址时，请填写对应密钥；个人配置仅用于本次访问，默认密钥不回显。')
     st.write('当前模型：' + current.model + (' · 已连接配置' if current.api_key else ' · 未配置'))
     with st.form('web_model_form', clear_on_submit=True):
         url = st.text_input('API 地址', value=current.api_url)
