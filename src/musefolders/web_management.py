@@ -62,6 +62,9 @@ def render_management(root: Path, plan):
     source, connection, details, ai = st.tabs(['音乐来源', 'QQ 音乐连接', '歌曲资料', 'AI 设置'])
     with source:
         st.write(f'当前曲库 · {len(plan.tracks)} 首')
+        from .library_import_ui import render_import
+        render_import(root, False, None)
+        st.divider()
         st.caption('通过 QQ 歌单链接或扫码后的收藏导入。歌曲资料不包含音频，暂时只有与演示曲库匹配的歌曲可以站内试听和显示听感。')
         url = st.text_input('QQ 音乐歌单链接 / ID', key='web_playlist_url')
         if st.button('导入歌单', key='web_import_url'):
@@ -71,12 +74,14 @@ def render_management(root: Path, plan):
                 st.error(str(exc))
         if st.session_state.get('personal_import_message'):
             st.info(st.session_state.personal_import_message)
-        if st.session_state.get('personal_active') and st.button('返回测试曲库', key='web_restore_demo'):
-            from .demo_mode import prepare_workspace
-            prepare_workspace(Path(st.session_state.simple_demo_bundle), root)
-            st.session_state.simple_plan = st.session_state.personal_reference_plan
+        if st.button('重新体验导入流程', key='web_restart_import'):
+            # Drop only visitor state. Shared server music remains untouched.
+            for name in ('simple_plan', 'personal_reference_plan', 'personal_import_message',
+                         'simple_music_import', 'simple_draft', 'simple_source'):
+                st.session_state.pop(name, None)
+            st.session_state.simple_initialized = True
+            st.session_state.simple_edit_library = False
             st.session_state.personal_active = False
-            st.session_state.pop('personal_import_message', None)
             invalidate()
             st.rerun()
         st.caption('歌单保存在本次访问，可在主界面导出；无需粘贴 JSON 清单。')

@@ -2,6 +2,8 @@
 !Dockerfile
 !requirements-cloud.txt
 !cloud_app.py
+!scripts/
+!scripts/restore_demo_library.py
 !src/
 !src/**
 !demo_library/

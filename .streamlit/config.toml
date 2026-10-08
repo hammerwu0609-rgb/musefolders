@@ -2,6 +2,10 @@
 toolbarMode = "minimal"
 showErrorDetails = "none"
 
+[server]
+maxUploadSize = 512
+maxMessageSize = 512
+
 [theme]
 base = "dark"
 primaryColor = "#31c27c"

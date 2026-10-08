@@ -7,7 +7,8 @@ import uuid
 from pathlib import Path
 
 from .astrology import build_zodiac, ZODIAC_LABELS
-from .playlist_draft import PlaylistDraft, apply_selection, reconcile, move_item, save_draft, load_draft
+from .playlist_draft import (PlaylistDraft, apply_selection, reconcile, move_item, save_draft,
+                             load_draft, set_single, reconcile_members, delete_song, move_song)
 from .playlist_filters import safe_playlist_name
 from .artist_regions import read_regions, region_for_artist, REGIONS
 
@@ -17,6 +18,10 @@ def parse_command(text: str) -> tuple[str, str, str]:
     text = text.strip()
     if not text or len(text) > 500:
         raise ValueError("请输入 1–500 字的描述。")
+    # Keep existing commands while accepting the new product vocabulary.
+    parts = re.split(r'([「“\"][^」”\"]*[」”\"])', text)
+    text = "".join(part if index % 2 else part.replace("我的预备歌单", "歌单").replace("预备歌单", "歌单")
+                   for index, part in enumerate(parts))
     name_match = re.search(r'[「“\"]([^」”\"]{1,60})[」”\"]', text)
     name = name_match.group(1) if name_match else "新歌单"
     if re.search(r"(?:新建|创建|生成|建一个|建成|建为).{0,50}歌单|歌单.{0,20}(?:新建|创建|生成)", text):
@@ -52,11 +57,10 @@ def archive_playlist(artifacts: Path, draft: PlaylistDraft) -> None:
     # PlaylistDraft uses slots. The snapshot identity is tracked by content/name.
     import hashlib
     identity = hashlib.sha256((draft.source_root + "\0" + (draft.name or "我的歌单")).encode()).hexdigest()[:24]
-    from dataclasses import asdict
     path = folder / f"{identity}.json"
     temporary = folder / f".{uuid.uuid4().hex}.tmp"
     try:
-        temporary.write_text(json.dumps(asdict(draft), ensure_ascii=False), encoding="utf-8")
+        temporary.write_text(json.dumps(draft.to_dict(), ensure_ascii=False), encoding="utf-8")
         temporary.replace(path)
     finally:
         temporary.unlink(missing_ok=True)
@@ -68,7 +72,9 @@ def saved_playlists(artifacts: Path, plan) -> list[dict]:
         try:
             value = json.loads(path.read_text(encoding="utf-8"))
             if value.get("source_root") == plan.source_root:
-                result.append({"id": path.stem, "name": value.get("name") or "我的歌单", "count": len(value["items"])})
+                excluded = set(value.get("excluded", []))
+                result.append({"id": path.stem, "name": value.get("name") or "我的预备歌单",
+                               "count": sum(item["content_id"] not in excluded for item in value["items"])})
         except (OSError, ValueError, KeyError, TypeError):
             continue
     return result
@@ -109,14 +115,14 @@ def edit_playlist(draft, plan, action: dict) -> None:
     if kind in {"add", "remove", "move"} and track is None:
         raise ValueError("这首歌已不在当前曲库中。")
     if kind == "add":
-        apply_selection(draft, plan, [track_id], "add", "consumer")
+        set_single(draft, plan, track_id, True)
     elif kind == "remove":
-        draft.items = [item for item in draft.items if item.content_id != (track.source_sha256 or track_id)]
+        delete_song(draft, track.source_sha256 or track_id)
     elif kind == "move":
         offset = action.get("offset")
         if offset not in (-1, 1):
             raise ValueError("歌单移动方向无效。")
-        move_item(draft, track.source_sha256 or track_id, offset)
+        move_song(draft, track.source_sha256 or track_id, offset)
     elif kind == "rename":
         draft.name = safe_playlist_name(str(action.get("name", "")))
     else:
@@ -141,7 +147,9 @@ def payload(plan, profiles, draft, sound, artifacts: Path, *, results=None, mess
             numeric = numeric_regions.get(country)
             map_regions[country] = {'id':country, 'name':fact.get('label') or (numeric[1] if numeric else country),
                                     'center':fact.get('center') or (numeric[2] if numeric else None)}
-        tracks.append({"id": track.track_id, "title": p.title, "artist": p.artist or "未知歌手",
+        tracks.append({"id": track.track_id, "contentId": track.source_sha256 or track.track_id,
+                       "analyzed": track.standard is not None,
+                       "title": p.title, "artist": p.artist or "未知歌手",
                        "playable": Path(track.source_path).is_file(),
                        "qqUrl": "https://y.qq.com/n/ryqq/songDetail/" + p.platform_mid if p.platform_mid else "",
                        "album": p.album, "year": p.year, "duration": round(track.acoustic.duration_s),
@@ -151,8 +159,28 @@ def payload(plan, profiles, draft, sound, artifacts: Path, *, results=None, mess
                        "regionSource":fact.get('source','') if country else ""})
     selected, missing = reconcile(draft, plan)
     selected = [tid for tid in selected if (plan.track_by_id()[tid].source_sha256 or tid) not in draft.excluded]
+    song_rows = []
+    for item in draft.items:
+        if item.content_id in draft.excluded:
+            continue
+        found, absent = reconcile_members([item], plan)
+        sources = [entry.source for entry in draft.entries
+                   if any(member.content_id == item.content_id for member in entry.members)]
+        song_rows.append({"content": item.content_id, "id": found[0] if found else None,
+                          "title": item.title, "missing": bool(absent), "sources": sources})
+    entries = []
+    for entry in draft.entries:
+        found, absent = reconcile_members(entry.members, plan)
+        entries.append({"id": entry.entry_id, "kind": entry.kind, "label": entry.label,
+                        "source": entry.source, "ids": found,
+                        "enabled": any(m.content_id not in draft.excluded for m in entry.members),
+                        "contents": [m.content_id for m in entry.members],
+                        "count": len(entry.members), "missing": len(absent),
+                        "missingTitles": [m.title for m in absent]})
     return {"tracks": tracks, "regions":list(map_regions.values()), "analysis": plan.analysis_id, "aiReady": ai_ready,
-            "playlist": {"name": draft.name or "我的歌单", "ids": selected, "missing": len(missing)},
+            "playlist": {"name": draft.name or "我的预备歌单", "ids": selected,
+                         "missing": sum(row["missing"] for row in song_rows),
+                         "entries": entries, "songs": song_rows},
             "savedPlaylists": saved_playlists(artifacts, plan),
             "results": None if results is None else {"query": results[1], "hits": [{"id": h.track_id, "reasons": list(h.reasons)} for h in results[2]]},
             "star": {"name": ZODIAC_LABELS['zh'][zodiac.sign] if zodiac.sign else "等待星群成形",

@@ -49,7 +49,9 @@ def test_simple_search_playlist_and_profile(tmp_path):
     assert not app.exception
     app.session_state['_test_action'] = {"kind": "remove", "id": track.track_id}
     app.run()
-    assert not app.session_state["simple_draft"].items
+    # Deletion now excludes the recording across sources while retaining undo provenance.
+    draft = app.session_state["simple_draft"]
+    assert not [item for item in draft.items if item.content_id not in draft.excluded]
     assert build_zodiac(portrait_map(app.session_state['simple_plan']), [track]).status == 'seed'
     app.session_state['_test_action'] = {"kind": "query", "text": "把搜索结果建成「爱情收藏」歌单"}
     app.run()
@@ -61,10 +63,10 @@ def test_import_empty_and_invalid_directory(tmp_path):
     code = f"from pathlib import Path\nfrom musefolders.simple_ui import render_app\nrender_app(Path({str(tmp_path)!r}))"
     app = AppTest.from_string(code).run()
     assert not app.exception and not app.radio
-    next(b for b in app.button if b.label == "导入音乐").click().run()
+    next(b for b in app.button if b.key == "simple_import").click().run()
     assert app.warning
     app.text_input[0].set_value(str(tmp_path/"missing"))
-    next(b for b in app.button if b.label == "导入音乐").click().run()
+    next(b for b in app.button if b.key == "simple_import").click().run()
     assert not app.exception and app.error
 
 

@@ -19,8 +19,8 @@ def test_demo_workspaces_are_independent_and_sources_shared(tmp_path):
     source=bundle(tmp_path)
     first=prepare_workspace(source,tmp_path/'first')
     second=prepare_workspace(source,tmp_path/'second')
-    one=json.loads((first/'artifacts/collection_plan.json').read_text())
-    two=json.loads((second/'artifacts/collection_plan.json').read_text())
+    one=json.loads((first/'artifacts/collection_plan.json').read_text(encoding='utf-8'))
+    two=json.loads((second/'artifacts/collection_plan.json').read_text(encoding='utf-8'))
     assert one==two
     assert Path(one['tracks'][0]['source_path']).is_file()
     (first/'artifacts/user_annotations.json').write_text('{"changed":true}',encoding='utf-8')

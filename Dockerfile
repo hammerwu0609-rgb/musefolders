@@ -8,6 +8,8 @@ RUN useradd --create-home --uid 10001 appuser
 COPY --chown=appuser:appuser cloud_app.py ./app.py
 COPY --chown=appuser:appuser src ./src
 COPY --chown=appuser:appuser demo_library ./demo_library
+COPY scripts/restore_demo_library.py ./scripts/restore_demo_library.py
+RUN python scripts/restore_demo_library.py demo_library && chown -R appuser:appuser demo_library
 COPY --chown=appuser:appuser .streamlit ./.streamlit
 USER appuser
 EXPOSE 7860

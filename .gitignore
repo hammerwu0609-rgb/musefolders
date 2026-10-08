@@ -58,3 +58,5 @@ docs/.qa_handoff_word/
 
 # Cloud demo data is prepared locally, never published with source
 demo_library/
+library_imports/
+library_backups/

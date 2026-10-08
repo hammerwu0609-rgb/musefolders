@@ -10,7 +10,7 @@ from .qqmusic_catalog import (QQMusicConnectionError, cached_platform, platform_
 from .user_annotations import confirmed_instrumental_ids, theme_assignments, verified_genre_assignments
 from .models import CollectionPlan
 from .playlist_draft import load_draft, PlaylistDraft
-from .service import analyze_library, load_plan
+from .service import load_plan
 from .sonic_map import MapPoint, SonicMap
 from .artist_regions import enrich_regions
 from .qqmusic_login import start_login, login_result
@@ -36,10 +36,11 @@ def portrait_map(plan: CollectionPlan) -> SonicMap:
 
 
 def _import(root, initial):
-    if initial:
-        st.caption('曲境 · 我的音乐收藏')
-        st.title("导入你的音乐收藏")
-        st.markdown('<p class="intro">导入音乐收藏，找一首此刻想听的歌，或看看属于你的音乐星座。</p>', unsafe_allow_html=True)
+    from .library_import_ui import render_import
+    render_import(root, initial, _folder_import)
+
+
+def _folder_import(root):
     if st.button("选择文件夹", key="simple_choose_folder"):
         window = None
         try:
@@ -57,24 +58,21 @@ def _import(root, initial):
                 window.destroy()
     source = st.text_input("音乐文件夹", key="simple_source", placeholder="填写保存 MP3、FLAC 等音乐的文件夹位置")
     st.caption("歌曲与歌词在本机分析。原始文件不会被修改。")
-    if st.button("导入音乐" if initial else "更新曲库", type="primary", key="simple_import"):
+    if st.button("读取并分析文件夹", type="primary", key="simple_import"):
         if not source.strip():
             st.warning("请先填写音乐文件夹的位置。")
             return
         progress = st.progress(0, text="正在准备你的音乐收藏…")
         try:
-            plan, _ = analyze_library(Path(source.strip()), root / "artifacts", naming_mode="quant", scheme_id="custom", language="zh",
-                                      progress=lambda done,total,name: progress.progress(min(done/max(total,1),1.), text=f"正在认识你的音乐 · {min(done+1,total)}/{total}"))
-            if not plan.tracks:
-                st.warning("没有找到可分析的音乐，请选择包含 MP3、FLAC、WAV 等音频的目录。")
-                return
-            st.session_state.simple_plan = plan
-            for key in ("simple_results","simple_conditions","simple_summary","simple_profiles",
-                        "simple_card","simple_draft","simple_playing","simple_playlist_name"):
-                st.session_state.pop(key, None)
-            st.session_state.simple_edit_library = False
-            st.rerun()
-        except (OSError, ValueError):
+            from .library_import import import_folder, MusicImportError
+            from .library_import_ui import activate_import
+            result = import_folder(Path(source.strip()), root,
+                progress=lambda done,total,name: progress.progress(min(done/max(total,1),1.),
+                    text=f"正在认识你的音乐 · {done}/{total}"))
+            activate_import(result, root)
+        except MusicImportError as exc:
+            st.error(str(exc))
+        except OSError:
             st.error("无法读取这个文件夹。请检查路径和访问权限，并确保它与分析保存目录分开。")
         except Exception:
             st.error("分析未能完成，请检查音频格式后重试；已完成的分析会复用。")
@@ -310,7 +308,7 @@ def _dismiss_management():
     st.session_state.simple_edit_library = False
 
 
-@st.dialog("管理曲库", width="medium", on_dismiss=_dismiss_management)
+@st.dialog("管理曲境", width="medium", on_dismiss=_dismiss_management)
 def _management_dialog(root, plan):
     _management(root, plan)
     st.divider()
@@ -323,6 +321,8 @@ def render_app(root: Path):
     st.set_page_config(page_title="曲境 · 我的音乐收藏", page_icon="♪", layout="wide", initial_sidebar_state="collapsed")
     st.markdown(STYLE, unsafe_allow_html=True)
     st.session_state.simple_artifact_dir = root / "artifacts"
+    if "simple_pending_source" in st.session_state:
+        st.session_state.simple_source = st.session_state.pop("simple_pending_source")
     active_settings(root)
     if st.session_state.pop("simple_model_reset", False):
         st.session_state.simple_model_url = ModelSettings().api_url
@@ -350,16 +350,19 @@ def render_app(root: Path):
     if plan is None:
         _import(root, True)
         return
-    if st.session_state.get("simple_draft_identity") != (plan.analysis_id, plan.source_root):
+    if (st.session_state.get("simple_draft_identity") != (plan.analysis_id, plan.source_root) or
+            not isinstance(st.session_state.get("simple_draft"), PlaylistDraft)):
         try:
             st.session_state.simple_draft = load_draft(root / "artifacts", plan)
         except (OSError, ValueError, TypeError):
             st.session_state.simple_draft = PlaylistDraft(plan.source_root, plan.analysis_id)
             st.error("上次歌单无法读取，请检查分析目录。")
         st.session_state.simple_draft_identity = plan.analysis_id, plan.source_root
-        for key in ("consumer_audio", "consumer_share", "consumer_message", "consumer_download"):
+        for key in ("consumer_audio", "consumer_share", "consumer_message", "consumer_download", "consumer_zip_export"):
             st.session_state.pop(key, None)
     profiles = _catalog(plan)
+    from .library_import_ui import render_import_receipt
+    render_import_receipt(plan, profiles)
     render_workspace(root, plan, profiles, st.session_state.simple_draft, portrait_map(plan))
     if st.session_state.get("simple_edit_library"):
         _management_dialog(root, plan)

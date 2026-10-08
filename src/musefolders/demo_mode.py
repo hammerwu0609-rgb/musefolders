@@ -1,4 +1,4 @@
-"""Fixed-library web demo: immutable shared sources, isolated visitor workspace."""
+"""Web demo: server-resident sources, explicit import, isolated visitor workspace."""
 from __future__ import annotations
 from collections import deque
 from dataclasses import dataclass, field
@@ -86,9 +86,4 @@ def render_demo(bundle: Path):
     if "demo_workspace" not in st.session_state:
         temporary = TemporaryDirectory(prefix="musefolders-visitor-")
         st.session_state.demo_workspace = temporary
-        try:
-            prepare_workspace(bundle, Path(temporary.name))
-        except (OSError, ValueError, KeyError):
-            st.error("演示曲库尚未准备完成，请稍后刷新。")
-            st.stop()
     render_app(Path(st.session_state.demo_workspace.name))
