@@ -106,7 +106,8 @@ def dispatch(action, plan, profiles, root, sound):
                               fallback_sources=platform_lyrics(cached_platform(plan.tracks, artifacts), artifacts),
                               profiles=profiles, intent=intent)
         total = len(hits)
-        hits = hits[:SEARCH_RESULT_LIMIT]
+        if key:
+            hits = hits[:SEARCH_RESULT_LIMIT]
         st.session_state.simple_results = plan.analysis_id, query, hits, total
         st.session_state.simple_conditions = plan.analysis_id, intent.conditions()
         return [hit.track_id for hit in hits]
