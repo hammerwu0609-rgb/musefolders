@@ -104,7 +104,7 @@ def _extract(archive: zipfile.ZipFile, destination: Path, progress: Progress):
     progress(len(files), len(files), "音乐包读取完成")
 
 
-def _verify_manifest(bundle: Path, progress: Progress):
+def _verify_manifest(bundle: Path, progress: Progress, *, server_package: bool = False):
     path = bundle / MANIFEST
     if not path.is_file():
         return
@@ -112,8 +112,11 @@ def _verify_manifest(bundle: Path, progress: Progress):
     entries = manifest.get("files")
     if manifest.get("format") != "musefolders-music-v1" or not isinstance(entries, list):
         raise MusicImportError("音乐包的校验清单格式不正确。")
+    # The server also keeps the downloadable archive alongside its unpacked
+    # contents. It is a transport copy, not a member of its own manifest.
+    wrapper = bundle / "experience.zip" if server_package else None
     actual = {p.relative_to(bundle).as_posix() for p in bundle.rglob("*")
-              if p.is_file() and p != path}
+              if p.is_file() and p != path and p != wrapper}
     recorded = set()
     for index, entry in enumerate(entries, 1):
         if not isinstance(entry, dict) or not isinstance(entry.get("path"), str):
@@ -322,7 +325,7 @@ def import_cloud_bundle(bundle: Path, root: Path, *,
     """Explicitly activate server-resident music without relocating shared audio."""
     workspace = _new_workspace(root)
     try:
-        _verify_manifest(bundle, progress)
+        _verify_manifest(bundle, progress, server_package=True)
         plan = _portable_plan(bundle, workspace, progress)
         report = {"tracks": len(plan.tracks), "cached": len(plan.tracks), "measured": 0,
                   "lyrics_files": len(list(Path(plan.source_root).rglob("*.lrc"))),
