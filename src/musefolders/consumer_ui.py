@@ -234,7 +234,11 @@ def dispatch(action, plan, profiles, root, sound):
                 st.session_state.consumer_message = "理解为：" + " · ".join(conditions[1]) if conditions and conditions[1] else f"找到 {len(ids)} 首收藏。"
     elif kind == "share":
         zodiac = build_zodiac(sound, plan.tracks)
-        card = make_zodiac_share_card(zodiac, sound, plan.tracks)
+        try:
+            card = make_zodiac_share_card(zodiac, sound, plan.tracks)
+        except RuntimeError:
+            st.session_state.consumer_message = "星座卡生成失败：服务端图像或中文字体依赖不可用，请联系维护者。"
+            return {"success": False, "added": False, "kind": kind, "token": action.get("token")}
         st.session_state.consumer_share = "data:image/png;base64," + base64.b64encode(card).decode()
         st.session_state.consumer_message = "分享卡已生成，可在星座下方下载。"
     elif kind == "export_zip":

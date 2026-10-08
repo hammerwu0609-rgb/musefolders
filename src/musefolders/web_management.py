@@ -19,6 +19,15 @@ def candidate(url, model, key, current):
     return config
 
 
+def form_candidate(url, model, key, current, tested=None):
+    """Reuse a successfully tested secret only for its unchanged endpoint/model."""
+    target = validate(ModelSettings(url, model, key))
+    if not key.strip() and tested is not None:
+        if (target.api_url, target.model) == (tested.api_url, tested.model):
+            return candidate(url, model, '', tested)
+    return candidate(url, model, key, current)
+
+
 def model_controls(root):
     current = active_settings(root)
     st.caption('模型用于理解搜索描述和分析歌词。你填写的配置仅用于本次访问；全站默认模型由服务端配置。')
@@ -31,20 +40,24 @@ def model_controls(root):
         check = st.form_submit_button('测试连接')
     if apply or check:
         try:
-            config = candidate(url, model, key, current)
+            config = form_candidate(url, model, key, current,
+                                    st.session_state.get('web_model_tested'))
             if check:
                 from .demo_mode import check_ai_budget
                 check_ai_budget()
                 test_connection(config)
-                st.success('连接测试通过。点击应用后使用。')
+                st.session_state.web_model_tested = config
+                st.success('连接测试通过，密钥已暂存于本次会话；无需再次粘贴，点击应用后使用。')
             else:
                 st.session_state.simple_model_settings = config
                 st.session_state.simple_model_origin = '本次会话配置'
+                st.session_state.pop('web_model_tested', None)
                 invalidate()
                 st.rerun()
         except (ModelSettingsError, RuntimeError) as exc:
             st.error(str(exc))
     if st.button('恢复服务器默认配置', key='web_model_reset'):
+        st.session_state.pop('web_model_tested', None)
         st.session_state.simple_model_settings = defaults()
         st.session_state.simple_model_origin = '服务器默认配置'
         invalidate()

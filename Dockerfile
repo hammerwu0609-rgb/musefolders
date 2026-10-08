@@ -1,12 +1,13 @@
 FROM python:3.12-slim-bookworm
 ENV PYTHONDONTWRITEBYTECODE=1 PYTHONUNBUFFERED=1 PIP_NO_CACHE_DIR=1 OPENBLAS_NUM_THREADS=1 OMP_NUM_THREADS=1
 WORKDIR /app
-RUN apt-get update && apt-get install -y --no-install-recommends libsndfile1 && rm -rf /var/lib/apt/lists/*
+RUN apt-get update && apt-get install -y --no-install-recommends libsndfile1 fonts-noto-cjk && rm -rf /var/lib/apt/lists/*
 COPY requirements-cloud.txt ./requirements.txt
 RUN pip install --no-cache-dir -r requirements.txt
 RUN useradd --create-home --uid 10001 appuser
 COPY --chown=appuser:appuser cloud_app.py ./app.py
 COPY --chown=appuser:appuser src ./src
+RUN PYTHONPATH=/app/src python -c "from musefolders.astrology import _font; _font(24, 'zh')"
 COPY --chown=appuser:appuser demo_library ./demo_library
 COPY scripts/restore_demo_library.py ./scripts/restore_demo_library.py
 RUN python scripts/restore_demo_library.py demo_library && chown -R appuser:appuser demo_library
