@@ -19,7 +19,7 @@ from .model_settings import (ModelSettings, ModelSettingsError, active_settings,
 
 STYLE = """<style>
 .stApp{background:#0e1110;color:#eef3ef;color-scheme:dark;}
-.stMainBlockContainer{max-width:1288px;padding:0 24px 2rem;}
+.stMainBlockContainer{width:100%;max-width:1760px;padding:0 clamp(16px,2vw,32px) 2rem;}
 header[data-testid=stHeader]{height:0;background:transparent;}
 [data-testid=stToolbar]{display:none;}
 .stButton button,.stDownloadButton button{border-radius:6px;min-height:40px;}
